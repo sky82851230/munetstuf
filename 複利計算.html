@@ -1,0 +1,165 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>複利計算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        input {
+            padding: 5px;
+            margin: 10px 0;
+            width: 150px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>複利計算器</h2>
+    <div>
+        <label>單筆投資金額 (元):</label>
+        <input type="number" id="initialInvestment" value="10000" min="0">
+    </div>
+    <div>
+        <label>每月定額投資 (元):</label>
+        <input type="number" id="monthlyInvestment" value="1000" min="0">
+    </div>
+    <div>
+        <label>年化利率 (%):</label>
+        <input type="number" id="annualRate" value="5" min="0" step="0.1">
+    </div>
+    <div>
+        <label>投資年限 (年):</label>
+        <input type="number" id="years" value="10" min="1">
+    </div>
+    <button onclick="calculateCompoundInterest()">計算</button>
+    <div id="result"></div>
+
+    <script>
+        function calculateCompoundInterest() {
+            const initialInvestment = parseFloat(document.getElementById('initialInvestment').value) || 0;
+            const monthlyInvestment = parseFloat(document.getElementById('monthlyInvestment').value) || 0;
+            const annualRate = parseFloat(document.getElementById('annualRate').value) / 100 || 0;
+            const years = parseInt(document.getElementById('years').value) || 1;
+
+            let resultHTML = '<h3>計算結果</h3>';
+            resultHTML += '<table><tr><th>年份</th><th>累積金額 (元)</th><th>當年利息 (元)</th></tr>';
+
+            let total = initialInvestment;
+            let previousTotal = initialInvestment;
+            const monthlyRate = annualRate / 12;
+
+            for (let year = 1; year <= years; year++) {
+                // 計算單筆投資該年複利
+                const singleCompound = initialInvestment * Math.pow(1 + annualRate, year);
+
+                // 計算該年定期定額複利
+                let totalMonthly = 0;
+                const totalMonths = year * 12;
+                for (let i = 0; i < totalMonths; i++) {
+                    totalMonthly += monthlyInvestment * Math.pow(1 + monthlyRate, totalMonths - i);
+                }
+
+                // 總金額
+                total = singleCompound + totalMonthly;
+                // 當年利息 = 總金額 - 上一年總金額 - 當年投入的本金
+                const yearlyPrincipal = monthlyInvestment * 12;
+                const interest = year === 1 
+                    ? total - initialInvestment - yearlyPrincipal
+                    : total - previousTotal - yearlyPrincipal;
+
+                resultHTML += `<tr><td>${year}</td><td>${total.toFixed(2)}</td><td>${interest.toFixed(2)}</td></tr>`;
+                previousTotal = total;
+            }
+
+            // 最終總計
+            resultHTML += '</table>';
+            resultHTML += `
+                <p>單筆投資最終金額: ${total.toFixed(2)} 元</p>
+                <p>定期定額累計金額: ${(total - initialInvestment * Math.pow(1 + annualRate, years)).toFixed(2)} 元</p>
+                <p>總計: ${total.toFixed(2)} 元</p>
+            `;
+
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+    </script>
+</body>
+</html>

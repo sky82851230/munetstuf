@@ -1,0 +1,228 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>煞車總泵與卡鉗放大倍率計算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        select, button {
+            padding: 5px;
+            margin: 10px 0;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: auto;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>煞車總泵與卡鉗放大倍率計算器</h2>
+    <div>
+        <label>選擇總泵型號:</label>
+        <select id="masterSelect">
+            <option value="">[選擇總泵]</option>
+        </select>
+    </div>
+    <div>
+        <label>選擇卡鉗型號:</label>
+        <select id="caliperSelect">
+            <option value="">[選擇卡鉗]</option>
+        </select>
+    </div>
+    <div>
+        <label>碟盤數量:</label>
+        <select id="discSelect">
+            <option value="1">單碟</option>
+            <option value="2">雙碟</option>
+        </select>
+    </div>
+    <button onclick="calculateBrakeRatio()">計算</button>
+    <div id="result"></div>
+
+    <script>
+        // 定義總泵數據 (型號: { pistonDiameter: 直徑mm })
+        const masters = {
+            'Brembo PS9': { pistonDiameter: 9 },
+            'Brembo PS11': { pistonDiameter: 11 },
+            'Brembo PS13': { pistonDiameter: 13 },
+            'Brembo PS15': { pistonDiameter: 15 },
+            'Brembo PS16': { pistonDiameter: 16 },
+            'Brembo 14RCS': { pistonDiameter: 14 },
+            'Brembo 15RCS': { pistonDiameter: 15 },
+            'Brembo 16RCS': { pistonDiameter: 16 },
+            'Brembo 17RCS': { pistonDiameter: 17 },
+            'Brembo 19RCS': { pistonDiameter: 19 },
+            'Nissin φ12.7mm': { pistonDiameter: 12.7 },
+            'Nissin φ14mm': { pistonDiameter: 14 },
+            'Nissin φ15.9mm': { pistonDiameter: 15.9 },
+            'Nissin φ17mm': { pistonDiameter: 17 },
+            'Nissin φ19mm': { pistonDiameter: 19 },
+            'Anchor φ9/16"': { pistonDiameter: 14.2875 },
+            'Anchor φ5/8"': { pistonDiameter: 15.875 },
+            'Anchor φ11/16"': { pistonDiameter: 17.4625 },
+            'Anchor φ3/4"': { pistonDiameter: 19.05 },
+            'Galespeed VRC / VRD / VRE 14': { pistonDiameter: 14 },
+            'Galespeed VRC / VRD / VRE 16': { pistonDiameter: 16 },
+            'Galespeed VRC / VRD / VRE 17.5': { pistonDiameter: 17.5 },
+            'Galespeed VRC / VRD / VRE 19': { pistonDiameter: 19 }
+        };
+
+        // 定義卡鉗數據 (型號: { pistons: [直徑1, 直徑2, ...] mm })
+        const calipers = {
+            'Brembo 小螃蟹': { pistons: [32] },
+            'Brembo P2-xx84 大螃蟹': { pistons: [34] },
+            'Brembo P4-40xx 基本對四': { pistons: [30, 34] },
+            'Brembo CNC 基本對四': { pistons: [30, 34] },
+            'Brembo M4.32 939輻射對四': { pistons: [32, 32] },
+            'Brembo M4 1098輻射對四': { pistons: [34, 34] },
+            'Brembo GP4-RS': { pistons: [30, 30] },
+            'Brembo M50': { pistons: [30, 30] },
+            'Brembo CNC 484': { pistons: [32, 32] },
+            'Brembo GP4-RX': { pistons: [32, 32] },
+            'Brembo Stylema': { pistons: [30, 30] },
+            'Brembo 輻射杜漢': { pistons: [32, 36] },
+            'Brembo 雙插銷': { pistons: [34, 34] },
+            'Brembo MotoGP': { pistons: [34, 38] },
+            'ACCOSSATO 輻射卡鉗': { pistons: [38, 34] },
+            'Nissin CNC Rear Caliper 對二卡鉗': { pistons: [32] },
+            'Nissin 基本對四卡鉗': { pistons: [30, 34] },
+            'Nissin 輻射對四卡鉗': { pistons: [30, 34] },
+            'Nissin 6pot Caliper 對六卡鉗': { pistons: [30, 30, 27, 27] },
+            'Nissin CNC 6pot Caliper 對六卡鉗': { pistons: [27, 27, 27, 27] },
+            '雙子星輻射卡鉗': { pistons: [30, 27] },
+            '三子星卡鉗': { pistons: [24, 24] },
+            'Bybre 對四卡鉗': { pistons: [28, 28] },
+            'Nashin GNC5 對六輻射卡鉗': { pistons: [24, 24, 22, 22] }
+        };
+
+        // 填充下拉選單
+        function populateSelect(selectId, data) {
+            const select = document.getElementById(selectId);
+            for (const model in data) {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                select.appendChild(option);
+            }
+        }
+
+        populateSelect('masterSelect', masters);
+        populateSelect('caliperSelect', calipers);
+
+        // 計算面積函數
+        function calculateArea(diameter) {
+            return Math.PI * Math.pow(diameter / 2, 2);
+        }
+
+        // 根據放大倍率判斷煞車手感
+        function getBrakeFeel(ratio) {
+            if (ratio <= 8) {
+                return "太硬（雙碟車款不適合）";
+            } else if (ratio >= 9 && ratio <= 13) {
+                return "偏硬（需要較大握力，可能適合競技或重型車輛）";
+            } else if (ratio >= 14 && ratio <= 17) {
+                return "適中舒適 (適合一般騎乘，提供平衡的手感和制動力）";
+            } else {
+                return "太軟（有可能拉到底 還達不到最大煞車力道）";
+            }
+        }
+
+        function calculateBrakeRatio() {
+            const masterModel = document.getElementById('masterSelect').value;
+            const caliperModel = document.getElementById('caliperSelect').value;
+            const discCount = parseInt(document.getElementById('discSelect').value);
+
+            if (!masterModel || !caliperModel) {
+                document.getElementById('result').innerHTML = '<p>請選擇總泵和卡鉗型號。</p>';
+                return;
+            }
+
+            const master = masters[masterModel];
+            const caliper = calipers[caliperModel];
+
+            const masterArea = calculateArea(master.pistonDiameter);
+
+            let caliperTotalArea = 0;
+            caliper.pistons.forEach(d => {
+                caliperTotalArea += calculateArea(d);
+            });
+            caliperTotalArea *= discCount; // 根據單碟或雙碟調整面積
+
+            const ratio = caliperTotalArea / masterArea;
+            const brakeFeel = getBrakeFeel(ratio);
+
+            document.getElementById('result').innerHTML = `
+                <p>總泵 (${masterModel}) 活塞面積: ${masterArea.toFixed(2)} mm²</p>
+                <p>卡鉗 (${caliperModel}, ${discCount} 碟) 總活塞面積: ${caliperTotalArea.toFixed(2)} mm²</p>
+                <p>放大倍率: ${ratio.toFixed(2)}</p>
+                <p>煞車手感: ${brakeFeel}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
