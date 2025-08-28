@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -119,28 +80,25 @@
             const monthlyInvestment = parseFloat(document.getElementById('monthlyInvestment').value) || 0;
             const annualRate = parseFloat(document.getElementById('annualRate').value) / 100 || 0;
             const years = parseInt(document.getElementById('years').value) || 1;
+            const totalMonths = years * 12;
+            const monthlyRate = annualRate / 12;
 
             let resultHTML = '<h3>計算結果</h3>';
             resultHTML += '<table><tr><th>年份</th><th>累積金額 (元)</th><th>當年利息 (元)</th></tr>';
 
             let total = initialInvestment;
             let previousTotal = initialInvestment;
-            const monthlyRate = annualRate / 12;
 
             for (let year = 1; year <= years; year++) {
-                // 計算單筆投資該年複利
+                // 單筆投資複利
                 const singleCompound = initialInvestment * Math.pow(1 + annualRate, year);
 
-                // 計算該年定期定額複利
-                let totalMonthly = 0;
-                const totalMonths = year * 12;
-                for (let i = 0; i < totalMonths; i++) {
-                    totalMonthly += monthlyInvestment * Math.pow(1 + monthlyRate, totalMonths - i);
-                }
+                // 定期定額複利（使用年金公式：P * [ (1 + r)^n - 1 ] / r）
+                const monthlyCompound = monthlyInvestment * (Math.pow(1 + monthlyRate, year * 12) - 1) / monthlyRate;
 
                 // 總金額
-                total = singleCompound + totalMonthly;
-                // 當年利息 = 總金額 - 上一年總金額 - 當年投入的本金
+                total = singleCompound + monthlyCompound;
+                // 當年利息 = 總金額 - 上一年總金額 - 當年本金（12個月投入）
                 const yearlyPrincipal = monthlyInvestment * 12;
                 const interest = year === 1 
                     ? total - initialInvestment - yearlyPrincipal
@@ -152,10 +110,12 @@
 
             // 最終總計
             resultHTML += '</table>';
+            const totalPrincipal = initialInvestment + (monthlyInvestment * totalMonths); // 總本金
+            const totalProfit = total - totalPrincipal; // 總獲利
             resultHTML += `
-                <p>單筆投資最終金額: ${total.toFixed(2)} 元</p>
-                <p>定期定額累計金額: ${(total - initialInvestment * Math.pow(1 + annualRate, years)).toFixed(2)} 元</p>
-                <p>總計: ${total.toFixed(2)} 元</p>
+                <p>本金: ${totalPrincipal.toFixed(2)} 元</p>
+                <p>總金額: ${total.toFixed(2)} 元</p>
+                <p>複利獲利: ${totalProfit.toFixed(2)} 元</p>
             `;
 
             document.getElementById('result').innerHTML = resultHTML;
