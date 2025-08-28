@@ -1,4 +1,43 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -389,7 +428,6 @@
                     maxRPM: 14000,
                     tireSpec: '190/55ZR17'
                 },
-                
                 'YZF-R1M 2015-2025': {
                     primaryDriveRatio: 1.681,
                     gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
@@ -419,7 +457,7 @@
                     maxRPM: 11000,
                     tireSpec: '160/60ZR17'
                 },
-                 'Ninja 1000 2010-2016': {
+                'Ninja 1000 2010-2016': {
                     primaryDriveRatio: 1.627,
                     gearRatios: [2.600, 1.950, 1.600, 1.389, 1.238, 1.107],
                     finalDriveRatio: 2.733,
@@ -437,8 +475,7 @@
                     maxRPM: 11500,
                     tireSpec: '190/50ZR17'
                 },
-
-                 'ZX-25R 2020-2025': {
+                'ZX-25R 2020-2025': {
                     primaryDriveRatio: 2.900,
                     gearRatios: [3.429, 2.250, 1.773, 1.474, 1.280, 1.129],
                     finalDriveRatio: 3.429,
@@ -456,7 +493,7 @@
                     maxRPM: 15000,
                     tireSpec: '160/60ZR17'
                 },
-                 'Ninja ZX-6R 2010-2023': {
+                'Ninja ZX-6R 2010-2023': {
                     primaryDriveRatio: 1.900,
                     gearRatios: [2.714, 2.143, 1.789, 1.500, 1.333, 1.200],
                     finalDriveRatio: 2.867,
@@ -501,8 +538,6 @@
                     maxRPM: 14200,
                     tireSpec: '190/55ZR17'
                 },
-               
-               
                 'Ninja H2 2021': {
                     primaryDriveRatio: 1.551,
                     gearRatios: [3.188, 2.526, 2.045, 1.727, 1.524, 1.360],
@@ -512,7 +547,6 @@
                     maxRPM: 14000,
                     tireSpec: '200/55ZR17'
                 }
-                
             },
             'Suzuki': {
                 'GSX-R1000 2021': {
@@ -536,23 +570,31 @@
             }
         };
 
-        // 填充車型選單，按車廠和模型名稱字母順序排序
+        // 明確定義製造商順序
+        const manufacturerOrder = ['Honda', 'Yamaha', 'Kawasaki', 'Suzuki'];
+
+        // 填充車型選單，按定義順序顯示
         function populateSelect() {
             const select = document.getElementById('bikeSelect');
-            for (const manufacturer in bikes) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = manufacturer;
+            select.innerHTML = '<option value="">[選擇車型]</option>'; // 清空選單並添加預設選項
 
-                // 按模型名稱字母順序排序
-                const models = Object.keys(bikes[manufacturer]).sort();
+            // 按照指定的製造商順序遍歷
+            for (const manufacturer of manufacturerOrder) {
+                if (bikes[manufacturer]) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = manufacturer;
 
-                for (const model of models) {
-                    const option = document.createElement('option');
-                    option.value = `${manufacturer}:${model}`;
-                    option.textContent = model;
-                    optgroup.appendChild(option);
+                    // 按物件定義順序遍歷車型
+                    const models = Object.keys(bikes[manufacturer]);
+
+                    for (const model of models) {
+                        const option = document.createElement('option');
+                        option.value = `${manufacturer}:${model}`;
+                        option.textContent = model;
+                        optgroup.appendChild(option);
+                    }
+                    select.appendChild(optgroup);
                 }
-                select.appendChild(optgroup);
             }
         }
 
