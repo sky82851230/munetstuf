@@ -153,9 +153,10 @@
             // 最終總計
             resultHTML += '</table>';
             resultHTML += `
-                <p>單筆投資最終金額: ${total.toFixed(2)} 元</p>
-                <p>定期定額累計金額: ${(total - initialInvestment * Math.pow(1 + annualRate, years)).toFixed(2)} 元</p>
-                <p>總計: ${total.toFixed(2)} 元</p>
+               
+                <p>本金: ${(total - initialInvestment * Math.pow(1 + annualRate, years)).toFixed(2)} 元</p>
+                <p>總金額: ${total.toFixed(2)} 元</p>
+                <p>複利獲利: ${total.toFixed(2)-(total - initialInvestment * Math.pow(1 + annualRate, years)).toFixed(2)} 元</p>
             `;
 
             document.getElementById('result').innerHTML = resultHTML;
