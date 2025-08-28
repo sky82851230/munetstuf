@@ -81,24 +81,6 @@
         // 車輛數據，按車廠分組
         const bikes = {
             'Honda': {
-                'CB1000R 2010-2017': {
-                    primaryDriveRatio: 1.604,
-                    gearRatios: [2.538, 1.941, 1.579, 1.363, 1.217, 1.115],
-                    finalDriveRatio: 2.750,
-                    frontSprocket: 16,
-                    rearSprocket: 44,
-                    maxRPM: 11500,
-                    tireSpec: '180/55ZR17'
-                },
-                'CB1000R 2018-2025': {
-                    primaryDriveRatio: 1.604,
-                    gearRatios: [2.538, 1.941, 1.579, 1.363, 1.217, 1.115],
-                    finalDriveRatio: 2.750,
-                    frontSprocket: 16,
-                    rearSprocket: 44,
-                    maxRPM: 11500,
-                    tireSpec: '190/55ZR17'
-                },
                 'CB150R 2017-2025': {
                     primaryDriveRatio: 3.260,
                     gearRatios: [3.083, 1.941, 1.500, 1.227, 1.041, 0.923],
@@ -126,32 +108,23 @@
                     maxRPM: 12000,
                     tireSpec: '180/55ZR17'
                 },
-                'CBR1000RR 2010-2020': {
-                    primaryDriveRatio: 1.717,
-                    gearRatios: [2.286, 1.778, 1.500, 1.333, 1.214, 1.138],
-                    finalDriveRatio: 2.625,
+                'CB1000R 2010-2017': {
+                    primaryDriveRatio: 1.604,
+                    gearRatios: [2.538, 1.941, 1.579, 1.363, 1.217, 1.115],
+                    finalDriveRatio: 2.750,
                     frontSprocket: 16,
-                    rearSprocket: 42,
-                    maxRPM: 12200,
-                    tireSpec: '190/50ZR17'
+                    rearSprocket: 44,
+                    maxRPM: 11500,
+                    tireSpec: '180/55ZR17'
                 },
-                'CBR1000RR 2021-2025': {
-                    primaryDriveRatio: 1.933,
-                    gearRatios: [2.615, 2.000, 1.667, 1.444, 1.304, 1.192],
-                    finalDriveRatio: 2.563,
+                'CB1000R 2018-2025': {
+                    primaryDriveRatio: 1.604,
+                    gearRatios: [2.538, 1.941, 1.579, 1.363, 1.217, 1.115],
+                    finalDriveRatio: 2.750,
                     frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14500,
+                    rearSprocket: 44,
+                    maxRPM: 11500,
                     tireSpec: '190/55ZR17'
-                },
-                'CBR1000RR-R 2020-2025': {
-                    primaryDriveRatio: 1.717,
-                    gearRatios: [2.615, 2.000, 1.667, 1.444, 1.304, 1.167],
-                    finalDriveRatio: 2.562,
-                    frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14500,
-                    tireSpec: '200/55ZR17'
                 },
                 'CBR150R 2010-2020': {
                     primaryDriveRatio: 3.260,
@@ -206,9 +179,45 @@
                     rearSprocket: 42,
                     maxRPM: 12000,
                     tireSpec: '180/55ZR17'
+                }, 
+                'CBR1000RR 2010-2020': {
+                    primaryDriveRatio: 1.717,
+                    gearRatios: [2.286, 1.778, 1.500, 1.333, 1.214, 1.138],
+                    finalDriveRatio: 2.625,
+                    frontSprocket: 16,
+                    rearSprocket: 42,
+                    maxRPM: 12200,
+                    tireSpec: '190/50ZR17'
+                },
+                'CBR1000RR 2021-2025': {
+                    primaryDriveRatio: 1.933,
+                    gearRatios: [2.615, 2.000, 1.667, 1.444, 1.304, 1.192],
+                    finalDriveRatio: 2.563,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14500,
+                    tireSpec: '190/55ZR17'
+                },
+                'CBR1000RR-R 2020-2025': {
+                    primaryDriveRatio: 1.717,
+                    gearRatios: [2.615, 2.000, 1.667, 1.444, 1.304, 1.167],
+                    finalDriveRatio: 2.562,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14500,
+                    tireSpec: '200/55ZR17'
                 }
             },
             'Yamaha': {
+                'MT-15 2019-2025': {
+                    primaryDriveRatio: 3.042,
+                    gearRatios: [2.833, 1.875, 1.412, 1.143, 0.957, 0.840],
+                    finalDriveRatio: 3.286,
+                    frontSprocket: 14,
+                    rearSprocket: 46,
+                    maxRPM: 10000,
+                    tireSpec: '140/70ZR17'
+                },
                 'MT-03 2015-2019': {
                     primaryDriveRatio: 3.042,
                     gearRatios: [2.500, 1.824, 1.348, 1.087, 0.920, 0.800],
@@ -272,42 +281,6 @@
                     maxRPM: 11500,
                     tireSpec: '190/55ZR17'
                 },
-                'MT-15 2019-2025': {
-                    primaryDriveRatio: 3.042,
-                    gearRatios: [2.833, 1.875, 1.412, 1.143, 0.957, 0.840],
-                    finalDriveRatio: 3.286,
-                    frontSprocket: 14,
-                    rearSprocket: 46,
-                    maxRPM: 10000,
-                    tireSpec: '140/70ZR17'
-                },
-                'YZF-R1 2010-2014': {
-                    primaryDriveRatio: 1.512,
-                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
-                    finalDriveRatio: 2.563,
-                    frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14000,
-                    tireSpec: '190/55ZR17'
-                },
-                'YZF-R1 2015-2020': {
-                    primaryDriveRatio: 1.681,
-                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
-                    finalDriveRatio: 2.563,
-                    frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14000,
-                    tireSpec: '190/55ZR17'
-                },
-                'YZF-R1 2021-2025': {
-                    primaryDriveRatio: 1.681,
-                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
-                    finalDriveRatio: 2.563,
-                    frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14000,
-                    tireSpec: '190/55ZR17'
-                },
                 'YZF-R15 V2 2011-2017': {
                     primaryDriveRatio: 3.042,
                     gearRatios: [2.833, 1.875, 1.412, 1.143, 0.957, 0.840],
@@ -334,15 +307,6 @@
                     rearSprocket: 48,
                     maxRPM: 10000,
                     tireSpec: '140/70ZR17'
-                },
-                'YZF-R1M 2015-2025': {
-                    primaryDriveRatio: 1.681,
-                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
-                    finalDriveRatio: 2.563,
-                    frontSprocket: 16,
-                    rearSprocket: 41,
-                    maxRPM: 14000,
-                    tireSpec: '200/55ZR17'
                 },
                 'YZF-R3 2015-2018': {
                     primaryDriveRatio: 3.042,
@@ -397,27 +361,46 @@
                     rearSprocket: 43,
                     maxRPM: 10000,
                     tireSpec: '180/55ZR17'
+                },
+                'YZF-R1 2010-2014': {
+                    primaryDriveRatio: 1.512,
+                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
+                    finalDriveRatio: 2.563,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14000,
+                    tireSpec: '190/55ZR17'
+                },
+                'YZF-R1 2015-2020': {
+                    primaryDriveRatio: 1.681,
+                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
+                    finalDriveRatio: 2.563,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14000,
+                    tireSpec: '190/55ZR17'
+                },
+                'YZF-R1 2021-2025': {
+                    primaryDriveRatio: 1.681,
+                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
+                    finalDriveRatio: 2.563,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14000,
+                    tireSpec: '190/55ZR17'
+                },
+                
+                'YZF-R1M 2015-2025': {
+                    primaryDriveRatio: 1.681,
+                    gearRatios: [2.533, 2.063, 1.762, 1.522, 1.364, 1.269],
+                    finalDriveRatio: 2.563,
+                    frontSprocket: 16,
+                    rearSprocket: 41,
+                    maxRPM: 14000,
+                    tireSpec: '200/55ZR17'
                 }
             },
             'Kawasaki': {
-                'Ninja 1000 2010-2016': {
-                    primaryDriveRatio: 1.627,
-                    gearRatios: [2.600, 1.950, 1.600, 1.389, 1.238, 1.107],
-                    finalDriveRatio: 2.733,
-                    frontSprocket: 15,
-                    rearSprocket: 41,
-                    maxRPM: 11500,
-                    tireSpec: '190/50ZR17'
-                },
-                'Ninja 1000 2017-2025': {
-                    primaryDriveRatio: 1.627,
-                    gearRatios: [2.600, 1.950, 1.600, 1.389, 1.238, 1.107],
-                    finalDriveRatio: 2.733,
-                    frontSprocket: 15,
-                    rearSprocket: 41,
-                    maxRPM: 11500,
-                    tireSpec: '190/50ZR17'
-                },
                 'Ninja 400 2018-2025': {
                     primaryDriveRatio: 2.219,
                     gearRatios: [2.929, 2.056, 1.600, 1.305, 1.091, 0.964],
@@ -436,14 +419,60 @@
                     maxRPM: 11000,
                     tireSpec: '160/60ZR17'
                 },
-                'Ninja H2 2021': {
-                    primaryDriveRatio: 1.551,
-                    gearRatios: [3.188, 2.526, 2.045, 1.727, 1.524, 1.360],
-                    finalDriveRatio: 2.444,
-                    frontSprocket: 18,
-                    rearSprocket: 44,
+                 'Ninja 1000 2010-2016': {
+                    primaryDriveRatio: 1.627,
+                    gearRatios: [2.600, 1.950, 1.600, 1.389, 1.238, 1.107],
+                    finalDriveRatio: 2.733,
+                    frontSprocket: 15,
+                    rearSprocket: 41,
+                    maxRPM: 11500,
+                    tireSpec: '190/50ZR17'
+                },
+                'Ninja 1000 2017-2025': {
+                    primaryDriveRatio: 1.627,
+                    gearRatios: [2.600, 1.950, 1.600, 1.389, 1.238, 1.107],
+                    finalDriveRatio: 2.733,
+                    frontSprocket: 15,
+                    rearSprocket: 41,
+                    maxRPM: 11500,
+                    tireSpec: '190/50ZR17'
+                },
+
+                 'ZX-25R 2020-2025': {
+                    primaryDriveRatio: 2.900,
+                    gearRatios: [3.429, 2.250, 1.773, 1.474, 1.280, 1.129],
+                    finalDriveRatio: 3.429,
+                    frontSprocket: 14,
+                    rearSprocket: 48,
+                    maxRPM: 17000,
+                    tireSpec: '150/60ZR17'
+                },
+                'ZX-4R 2023-2025': {
+                    primaryDriveRatio: 2.029,
+                    gearRatios: [2.929, 2.056, 1.619, 1.333, 1.154, 1.037],
+                    finalDriveRatio: 3.429,
+                    frontSprocket: 14,
+                    rearSprocket: 48,
+                    maxRPM: 15000,
+                    tireSpec: '160/60ZR17'
+                },
+                 'Ninja ZX-6R 2010-2023': {
+                    primaryDriveRatio: 1.900,
+                    gearRatios: [2.714, 2.143, 1.789, 1.500, 1.333, 1.200],
+                    finalDriveRatio: 2.867,
+                    frontSprocket: 15,
+                    rearSprocket: 43,
                     maxRPM: 14000,
-                    tireSpec: '200/55ZR17'
+                    tireSpec: '180/55ZR17'
+                },
+                'Ninja ZX-6R 2024-2025': {
+                    primaryDriveRatio: 1.900,
+                    gearRatios: [2.846, 2.200, 1.850, 1.600, 1.423, 1.300],
+                    finalDriveRatio: 2.867,
+                    frontSprocket: 15,
+                    rearSprocket: 43,
+                    maxRPM: 14200,
+                    tireSpec: '180/55ZR17'
                 },
                 'Ninja ZX-10R 2010-2015': {
                     primaryDriveRatio: 1.681,
@@ -472,42 +501,18 @@
                     maxRPM: 14200,
                     tireSpec: '190/55ZR17'
                 },
-                'Ninja ZX-6R 2010-2023': {
-                    primaryDriveRatio: 1.900,
-                    gearRatios: [2.714, 2.143, 1.789, 1.500, 1.333, 1.200],
-                    finalDriveRatio: 2.867,
-                    frontSprocket: 15,
-                    rearSprocket: 43,
+               
+               
+                'Ninja H2 2021': {
+                    primaryDriveRatio: 1.551,
+                    gearRatios: [3.188, 2.526, 2.045, 1.727, 1.524, 1.360],
+                    finalDriveRatio: 2.444,
+                    frontSprocket: 18,
+                    rearSprocket: 44,
                     maxRPM: 14000,
-                    tireSpec: '180/55ZR17'
-                },
-                'Ninja ZX-6R 2024-2025': {
-                    primaryDriveRatio: 1.900,
-                    gearRatios: [2.846, 2.200, 1.850, 1.600, 1.423, 1.300],
-                    finalDriveRatio: 2.867,
-                    frontSprocket: 15,
-                    rearSprocket: 43,
-                    maxRPM: 14200,
-                    tireSpec: '180/55ZR17'
-                },
-                'ZX-25R 2020-2025': {
-                    primaryDriveRatio: 2.900,
-                    gearRatios: [3.429, 2.250, 1.773, 1.474, 1.280, 1.129],
-                    finalDriveRatio: 3.429,
-                    frontSprocket: 14,
-                    rearSprocket: 48,
-                    maxRPM: 17000,
-                    tireSpec: '150/60ZR17'
-                },
-                'ZX-4R 2023-2025': {
-                    primaryDriveRatio: 2.029,
-                    gearRatios: [2.929, 2.056, 1.619, 1.333, 1.154, 1.037],
-                    finalDriveRatio: 3.429,
-                    frontSprocket: 14,
-                    rearSprocket: 48,
-                    maxRPM: 15000,
-                    tireSpec: '160/60ZR17'
+                    tireSpec: '200/55ZR17'
                 }
+                
             },
             'Suzuki': {
                 'GSX-R1000 2021': {
